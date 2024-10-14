@@ -2,8 +2,10 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-//const _defaultColor = Color(0xFF34568B);
+const gredientColor1 = Color(0xFFf9d8b1);
+const gredientColor2 = Color(0xFFf8f5f0);
 const whiteColor = Color(0xFFFFFFFF);
+const grulloColor = Color(0xFFa4957e);
 
 class Tile extends StatelessWidget {
   const Tile({
@@ -154,12 +156,14 @@ class OfferButton extends StatelessWidget {
   final String label;
   final int count;
   final bool isActive;
+  final bool isCircle;
 
   const OfferButton({
     Key? key,
     required this.label,
     required this.count,
     required this.isActive,
+    required this.isCircle,
   }) : super(key: key);
 
   @override
@@ -168,14 +172,8 @@ class OfferButton extends StatelessWidget {
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isActive ? Theme.of(context).primaryColor : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 5,
-            offset: Offset(0, 2),
-          ),
-        ],
+        borderRadius: isCircle ? null : BorderRadius.circular(16),
+        shape: isCircle ? BoxShape.circle : BoxShape.rectangle,
       ),
       child: Column(
         children: [
