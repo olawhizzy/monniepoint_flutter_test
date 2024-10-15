@@ -1,153 +1,60 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_font_icons/flutter_font_icons.dart';
 
 const gredientColor1 = Color(0xFFf9d8b1);
 const gredientColor2 = Color(0xFFf8f5f0);
 const whiteColor = Color(0xFFFFFFFF);
 const grulloColor = Color(0xFFa4957e);
-
-class Tile extends StatelessWidget {
-  const Tile({
-    Key? key,
-    required this.index,
-    this.extent,
-    this.backgroundColor,
-    this.bottomSpace,
-  }) : super(key: key);
-
-  final int index;
-  final double? extent;
-  final double? bottomSpace;
-  final Color? backgroundColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(child: _buildTileContent(context)),
-        if (bottomSpace != null)
-          Container(
-            height: bottomSpace,
-            color: backgroundColor ?? Colors.green,
-          ),
-      ],
-    );
-  }
-
-  Widget _buildTileContent(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/images/$index.png'),
-          fit: BoxFit.cover,
-          filterQuality: FilterQuality.high,
-        ),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      height: extent,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          _buildInfoBar(context),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoBar(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-      height: 40,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.5),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.white.withOpacity(0.2)),
-            ),
-            child: Stack(
-              children: [
-                Center(
-                  child: Text(
-                    'data',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  right: 0,
-                  top: 0,
-                  bottom: 0,
-                  child: _buildCircleAvatar(),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-
-  Widget _buildCircleAvatar() {
-    return Container(
-      width: 40,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 3,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Center(
-        child: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.black),
-      ),
-    );
-  }
-}
+const yellowheadColor = Color(0xFFfc9d11);
+const darkGreyColor = Color(0xFF2b2b2b);
+const darkColor = Color(0xFF232220);
+const greyColor = Color(0xFF747474);
 
 class SearcheBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.search, color: Colors.grey),
-          SizedBox(width: 10),
-          Expanded(
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Saint Petersburg',
-                border: InputBorder.none,
-              ),
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            margin: EdgeInsets.symmetric(horizontal: 10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.search, color: Colors.grey),
+                SizedBox(width: 10),
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Saint Petersburg',
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ),
+                //Icon(Icons.tune, color: Colors.grey),
+              ],
             ),
           ),
-          Icon(Icons.tune, color: Colors.grey),
-        ],
-      ),
+        ),
+        Container(
+          padding: EdgeInsets.all(15),
+          margin: EdgeInsets.symmetric(horizontal: 5),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white,
+          ),
+          child: Center(
+            child: Icon(Icons.list, size: 16, color: Colors.black),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -171,7 +78,7 @@ class OfferButton extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isActive ? Theme.of(context).primaryColor : Colors.white,
+        color: isActive ? yellowheadColor : Colors.white,
         borderRadius: isCircle ? null : BorderRadius.circular(16),
         shape: isCircle ? BoxShape.circle : BoxShape.rectangle,
       ),
@@ -185,13 +92,19 @@ class OfferButton extends StatelessWidget {
             ),
           ),
           SizedBox(height: 8),
-          Text(
-            count.toString(),
-            style: TextStyle(
-              color: isActive ? Colors.white : Colors.black,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
+          TweenAnimationBuilder<int>(
+            tween: IntTween(begin: 0, end: count),
+            duration: Duration(milliseconds: 2500), // Adjust this for faster/slower animation
+            builder: (BuildContext context, int value, Widget? child) {
+              return Text(
+                value.toString(),
+                style: TextStyle(
+                  color: isActive ? Colors.white : Colors.black,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              );
+            },
           ),
           Text(
             'offers',
@@ -309,29 +222,29 @@ class CustomBottomNavBar extends StatelessWidget {
 class FilterButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 5,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.tune, color: Colors.black),
-          SizedBox(width: 8),
-          Text('Filter', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-        ],
-      ),
+    return Column(
+      children: [
+        myFabButton,
+        SizedBox(height: 4,),
+        myFabButton
+      ],
     );
   }
+  final myFabButton = Container(
+    width: 40.0,
+    height: 40.0,
+    child: new RawMaterialButton(
+      fillColor: greyColor,
+      shape: new CircleBorder(),
+      elevation: 0.0,
+      child: Icon(
+        Feather.navigation,
+        color: whiteColor,
+      ),
+      onPressed: () {},
+    ),
+  );
+
 }
 
 class ListButton extends StatelessWidget {
@@ -340,7 +253,7 @@ class ListButton extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.black,
+        color: greyColor,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(

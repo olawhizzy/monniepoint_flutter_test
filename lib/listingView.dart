@@ -1,11 +1,30 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import 'common.dart';
+import 'list_tile.dart';
 
-class ListingView extends StatelessWidget {
+class ListingView extends StatefulWidget {
+  @override
+  State<ListingView> createState() => _ListingViewState();
+}
+
+class _ListingViewState extends State<ListingView>{
+
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -13,22 +32,39 @@ class ListingView extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            stops: [
-              0.1,
-              0.4,
-              0.6,
-              0.9,
-            ],
-            colors: [
-              gredientColor2,
-              gredientColor1,
-              gredientColor1,
-              gredientColor1,
-            ],
+            stops: [0.1, 0.4, 0.6, 0.9,],
+            colors: [gredientColor2, gredientColor1, gredientColor1, gredientColor1,],
           )
       ),
-      child: SafeArea(
-        child: Column(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                decoration: BoxDecoration(
+                  color: whiteColor,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.location_on, color: grulloColor, size: 12,),
+                    Text('Saint Petersburg', style: TextStyle(color: grulloColor, fontSize: 10)),
+                  ],
+                ),
+              ).animate()
+                  .slideX(begin: -1, end: 0, duration: 500.ms, curve: Curves.easeOutQuad),
+              CircleAvatar(
+                backgroundImage: AssetImage('assets/images/profile_image.png'),
+              ),
+            ],
+          ),
+
+        ),
+        body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
@@ -36,28 +72,6 @@ class ListingView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: whiteColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.location_on, color: grulloColor, size: 12,),
-                            Text('Saint Petersburg', style: TextStyle(color: grulloColor, fontSize: 10)),
-                          ],
-                        ),
-                      ),
-                      CircleAvatar(
-                        backgroundImage: AssetImage('assets/images/profile_image.png'),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 15,),
                   Text(
                     "Hi, Marina",
                     style: TextStyle(fontSize: 18, color: grulloColor),
@@ -71,7 +85,7 @@ class ListingView extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
+            ).animate().slideY(begin: 1, end: 0, duration: 500.ms, curve: Curves.easeOutQuad),
             SizedBox(height: 10,),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -82,8 +96,9 @@ class ListingView extends StatelessWidget {
                   Expanded(child: OfferButton(label: 'RENT', count: 2212, isActive: false, isCircle: false,)),
                 ],
               ),
-            ),
-            SizedBox(height: 25,),
+            ).animate()
+                .slideY(begin: 1, end: 0, duration: 500.ms, delay: 200.ms, curve: Curves.easeOutQuad),
+            SizedBox(height: 15,),
             Expanded(
               child: ListView(
                 //padding: EdgeInsets.all(16),
@@ -121,7 +136,9 @@ class ListingView extends StatelessWidget {
                         ),
                       ],
                     ),
-                  )
+                  ).animate()
+                      .fadeIn(duration: 600.ms, delay: 300.ms)
+                      .slideY(begin: 0.2, end: 0, duration: 600.ms, delay: 300.ms, curve: Curves.easeOutQuad),
                 ],
               ),
             ),
