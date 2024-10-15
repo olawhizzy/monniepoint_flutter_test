@@ -3,9 +3,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:monniepoint_flutter_test/widgets/offer_button.dart';
 
 import 'common.dart';
-import 'list_tile.dart';
+import 'widgets/list_tile.dart';
 
 class ListingView extends StatefulWidget {
   @override
@@ -59,7 +60,7 @@ class _ListingViewState extends State<ListingView>{
                   .slideX(begin: -1, end: 0, duration: 500.ms, curve: Curves.easeOutQuad),
               CircleAvatar(
                 backgroundImage: AssetImage('assets/images/profile_image.png'),
-              ),
+              ).animate().scale(duration: 1000.ms, curve: Curves.easeOut),
             ],
           ),
 
@@ -102,6 +103,7 @@ class _ListingViewState extends State<ListingView>{
             Expanded(
               child: ListView(
                 //padding: EdgeInsets.all(16),
+                shrinkWrap: true,
                 children: [
                   Container(
                     padding: EdgeInsets.all(8),

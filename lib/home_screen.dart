@@ -17,6 +17,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   static const _selectedColor = yellowheadColor;
+  List<bool> _isRippling = List.generate(5, (_) => false);
+
 
   static List<Widget> _pages = <Widget>[
     ListingView(),
@@ -25,10 +27,18 @@ class _HomeScreenState extends State<HomeScreen> {
     ProfilePage(),
     ProfilePage(),
   ];
-
+  
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      _isRippling[index] = true;
+      Future.delayed(300.milliseconds, () {
+        if (mounted) {
+          setState(() {
+            _isRippling[index] = false;
+          });
+        }
+      });
     });
   }
 
@@ -62,9 +72,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _buildNavItem(Feather.search, 1),
-                  _buildNavItem(Icons.favorite, 2),
-                  _buildNavItem(FontAwesome5Solid.home, 0),
-                  _buildNavItem(Icons.search, 3),
+                  _buildNavItem(Feather.message_square, 2),
+                  _buildNavItem(Feather.home, 0),
+                  _buildNavItem(Feather.heart, 3),
                   _buildNavItem(Icons.person, 4),
                 ],
               ),
@@ -80,17 +90,38 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildNavItem(IconData icon, int index) {
     return GestureDetector(
       onTap: () => _onItemTapped(index),
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: _selectedIndex == index ? _selectedColor : darkColor,
-        ),
-        child: Icon(
-          icon,
-          color: _selectedIndex == index ? Colors.white : Colors.grey[300],
-        ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: _selectedIndex == index ? _selectedColor : darkColor,
+            ),
+            child: Icon(
+              icon,
+              color: _selectedIndex == index ? Colors.white : Colors.grey[300],
+            ),
+          ),
+          if (_isRippling[index])
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withOpacity(0.9),
+              ),
+            ).animate(onPlay: (controller) => controller.repeat())
+                .scale(
+                begin: Offset(0.5, 0.5),
+                end: Offset(1.5, 1.5),
+                duration: 300.ms,
+                curve: Curves.easeOut
+            )
+                .fadeOut(duration: 300.ms, curve: Curves.easeOut),
+        ],
       ),
     );
   }

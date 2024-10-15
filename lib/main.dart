@@ -3,7 +3,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:monniepoint_flutter_test/home_screen.dart';
 
 import 'common.dart';
-import 'list_tile.dart';
+import 'widgets/list_tile.dart';
 
 void main() {
   runApp(const MyApp());

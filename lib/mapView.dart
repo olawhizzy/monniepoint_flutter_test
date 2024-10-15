@@ -6,6 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:monniepoint_flutter_test/widgets/filter_button.dart';
+import 'package:monniepoint_flutter_test/widgets/list_button.dart';
+import 'package:monniepoint_flutter_test/widgets/search_bar.dart';
 
 import 'common.dart';
 
@@ -36,8 +39,6 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
 
 
   Future<void> _createMarkers() async {
-    final BitmapDescriptor labelIcon = await _createLabelMarkerBitmap();
-    final BitmapDescriptor customIcon = await _createCustomMarkerBitmap();
 
     final List<LatLng> markerLocations = [
       LatLng(59.9311, 30.3609),  // Original center point
@@ -48,13 +49,6 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
       LatLng(59.9340, 30.4000),
     ];
 
-    /*setState(() {
-      _markers = markerLocations.asMap().entries.map((entry) => Marker(
-        markerId: MarkerId('marker_${entry.key}'),
-        position: entry.value,
-        icon: customIcon,
-      )).toSet();
-    });*/
     for (int i = 0; i < markerLocations.length; i++) {
       final labelMarker = await _createMarkerBitmap('Location ${i + 1}', isLabel: true);
       final iconMarker = await _createMarkerBitmap('', isLabel: false);
@@ -123,80 +117,6 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
     return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
   }
 
-  Future<BitmapDescriptor> _createLabelMarkerBitmap() async {
-    final PictureRecorder pictureRecorder = PictureRecorder();
-    final Canvas canvas = Canvas(pictureRecorder);
-    final Paint paint = Paint()..color = Colors.white;
-
-    const double size = 120;
-    const double padding = 8;
-
-    // Draw rounded rectangle
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(Rect.fromLTWH(0, 0, size, 40), Radius.circular(20)),
-      paint,
-    );
-
-    // Draw text
-    final textPainter = TextPainter(textDirection: TextDirection.ltr);
-    textPainter.text = TextSpan(
-      text: 'Location',
-      style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold),
-    );
-    textPainter.layout();
-    textPainter.paint(canvas, Offset(padding, (40 - textPainter.height) / 2));
-
-    final img = await pictureRecorder.endRecording().toImage(size.toInt(), 40);
-    final data = await img.toByteData(format: ImageByteFormat.png);
-
-    return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
-  }
-
-  Future<BitmapDescriptor> _createCustomMarkerBitmap() async {
-    final PictureRecorder pictureRecorder = PictureRecorder();
-    final Canvas canvas = Canvas(pictureRecorder);
-    final Paint paint = Paint()..color = Colors.orange;
-
-    const double size = 80;
-    const double iconSize = 40;
-    const double cornerRadius = 12;
-
-    // Draw rounded square
-    final Path path = Path()
-      ..moveTo(0, cornerRadius)
-      ..lineTo(0, size) // Bottom left corner is not rounded
-      ..lineTo(size - cornerRadius, size)
-      ..quadraticBezierTo(size, size, size, size - cornerRadius)
-      ..lineTo(size, cornerRadius)
-      ..quadraticBezierTo(size, 0, size - cornerRadius, 0)
-      ..lineTo(cornerRadius, 0)
-      ..quadraticBezierTo(0, 0, 0, cornerRadius);
-
-    canvas.drawPath(path, paint);
-
-    // Draw Font Awesome icon
-    final textPainter = TextPainter(textDirection: TextDirection.ltr);
-    textPainter.text = TextSpan(
-      text: String.fromCharCode(Icons.home_work_outlined.codePoint),
-      style: TextStyle(
-        fontSize: iconSize,
-        fontFamily: Icons.home_work_outlined.fontFamily,
-        color: Colors.white,
-      ),
-    );
-
-    textPainter.layout();
-    textPainter.paint(
-      canvas,
-      Offset((size - textPainter.width) / 2, (size - textPainter.height) / 2),
-    );
-
-    // Convert canvas to image
-    final img = await pictureRecorder.endRecording().toImage(size.toInt(), size.toInt());
-    final data = await img.toByteData(format: ImageByteFormat.png);
-
-    return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
-  }
 
   void _animateMarker(int index, BitmapDescriptor customIcon) {
     setState(() {
@@ -244,27 +164,37 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
           left: 20,
           right: 20,
           child: SearcheBar(),
-        ),
+        ).animate().scale(duration: 1000.ms, curve: Curves.easeOut),
         Positioned(
           bottom: 100,
           left: 20,
-          child: FilterButton(),
-        ),
+          child: Column(
+            children: [
+              FilterButton(
+                icon: Ionicons.wallet_outline,
+                filterOptions: [
+                  FilterOption(label: 'Price', value: 'price', icon: Feather.dollar_sign),
+                  FilterOption(label: 'Rating', value: 'rating', icon: Feather.star),
+                  FilterOption(label: 'Distance', value: 'distance', icon: Feather.map_pin),
+                ],
+              ),
+
+              SizedBox(height: 4),
+              FilterButton(
+                icon: Feather.navigation,
+                onPressed: () {
+                  print('Navigation button pressed');
+                },
+              ),
+            ],
+          ),
+        ).animate().scale(duration: 1000.ms, curve: Curves.easeOut),
         Positioned(
           bottom: 100,
           right: 20,
           child: ListButton(),
-        ),
+        ).animate().scale(duration: 1000.ms, curve: Curves.easeOut),
       ],
-    ).animate(controller: _controller)
-        .fadeIn(duration: 2500.ms)
-        .then()
-        .custom(
-      duration: 3.5.seconds,
-      builder: (context, value, child) => Opacity(
-        opacity: 1,
-        child: child,
-      ),
     );
   }
 
